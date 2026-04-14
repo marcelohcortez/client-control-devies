@@ -10,7 +10,8 @@
       "@client-control/shared": ["../../packages/shared/src/types.ts"]
     },
     "outDir": "dist",
-    "rootDir": "src"
+    "rootDir": "src",
+    "ignoreDeprecations": "6.0"
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist"]

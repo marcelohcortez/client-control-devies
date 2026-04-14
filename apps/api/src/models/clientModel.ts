@@ -1,4 +1,5 @@
 import { db } from "../db/client";
+import type { InValue } from "@libsql/client";
 import type {
   Client,
   CreateClientInput,
@@ -41,7 +42,7 @@ export async function listClients(
   } = filters;
 
   const conditions: string[] = [];
-  const args: unknown[] = [];
+  const args: InValue[] = [];
 
   if (companyName) {
     conditions.push("LOWER(company_name) LIKE LOWER(?)");
@@ -147,7 +148,7 @@ export async function updateClient(
   editedBy: string
 ): Promise<Client | null> {
   const fields: string[] = [];
-  const args: unknown[] = [];
+  const args: InValue[] = [];
 
   if (input.company_name !== undefined) {
     fields.push("company_name = ?");
@@ -190,12 +191,10 @@ export async function updateClient(
 
   fields.push("last_edited_by = ?");
   args.push(editedBy);
-  fields.push("updated_at = datetime('now')");
-  args.push(id);
 
   const result = await db.execute({
-    sql: `UPDATE clients SET ${fields.join(", ")} WHERE id = ? RETURNING *`,
-    args,
+    sql: `UPDATE clients SET ${fields.join(", ")}, updated_at = datetime('now') WHERE id = ? RETURNING *`,
+    args: [...args, id],
   });
 
   const row = result.rows[0];
