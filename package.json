@@ -9,5 +9,8 @@
     "test:e2e": "pnpm --filter web test:e2e",
     "migrate": "pnpm --filter api migrate"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "pnpm": {
+    "onlyBuiltDependencies": ["esbuild", "bcrypt"]
+  }
 }
