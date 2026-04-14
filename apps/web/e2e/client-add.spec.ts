@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { login } from "./helpers";
+import { login, TEST_USER } from "./helpers";
 
 const UNIQUE_NAME = `E2E_Test_Company_${Date.now()}`;
 
@@ -39,5 +39,25 @@ test.describe("Add Client", () => {
     await page.getByLabel("Status / Notes").fill("Hot lead");
     await page.getByRole("button", { name: /add client/i }).click();
     await expect(page).toHaveURL(/\/clients\/\d+/);
+  });
+
+  test("added_by is automatically set to the logged-in username", async ({ page }) => {
+    await page.goto("/clients/new");
+    await page.getByLabel("Company name").fill(`${UNIQUE_NAME}_addedby`);
+    await page.getByRole("button", { name: /add client/i }).click();
+    await page.waitForURL(/\/clients\/\d+/);
+    const addedByValue = page.locator("xpath=//dt[normalize-space()='Added by']/following-sibling::dd[1]");
+    await expect(addedByValue).toHaveText(TEST_USER.username);
+  });
+
+  test("additional contacts can be added and appear on detail page", async ({ page }) => {
+    await page.goto("/clients/new");
+    await page.getByLabel("Company name").fill(`${UNIQUE_NAME}_contacts`);
+    await page.getByRole("button", { name: /add contact/i }).click();
+    await page.getByLabel("Name", { exact: true }).fill("Secondary Contact");
+    await page.getByRole("button", { name: /add client/i }).click();
+    await page.waitForURL(/\/clients\/\d+/);
+    await expect(page.getByRole("heading", { name: /additional contacts/i })).toBeVisible();
+    await expect(page.getByText("Secondary Contact")).toBeVisible();
   });
 });

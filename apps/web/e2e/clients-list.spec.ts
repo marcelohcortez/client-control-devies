@@ -38,10 +38,60 @@ test.describe("Clients List", () => {
   });
 
   test("filter by company name reduces results", async ({ page }) => {
-    // Open filter bar first (collapsed by default)
     await page.getByRole("button", { name: /expand filters/i }).click();
     await page.getByPlaceholder("Company name").fill("xyzzy_nonexistent_12345");
     await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
+  });
+
+  test("filter by contact name reduces results", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
+    await page.getByPlaceholder("Contact name").fill("xyzzy_nonexistent_12345");
+    await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
+  });
+
+  test("filter by email reduces results", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
+    await page.getByPlaceholder("Email").fill("xyzzy_nonexistent@nowhere.invalid");
+    await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
+  });
+
+  test("filter by phone reduces results", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
+    await page.getByPlaceholder("Phone").fill("000-xyzzy-nonexistent");
+    await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
+  });
+
+  test("filter by type of business reduces results", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
+    await page.getByPlaceholder("Type of business").fill("xyzzy_nonexistent_industry");
+    await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
+  });
+
+  test("filter by added by reduces results", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
+    await page.getByPlaceholder("Added by").fill("xyzzy_nonexistent_user");
+    await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
+  });
+
+  test("filter bar can be collapsed after expanding", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
+    await expect(page.getByPlaceholder("Company name")).toBeVisible();
+    await page.getByRole("button", { name: /collapse filters/i }).click();
+    await expect(page.getByPlaceholder("Company name")).not.toBeVisible();
+  });
+
+  test("page size selector changes number of results per page", async ({ page }) => {
+    // Default limit is 10, with many imported clients there should be exactly 10 rows
+    await expect(page.locator("tbody tr")).toHaveCount(10);
+    await page.getByLabel(/per page/i).selectOption("5");
+    await expect(page.locator("tbody tr")).toHaveCount(5);
+  });
+
+  test("pagination controls are visible and next page works", async ({ page }) => {
+    await expect(page.getByLabel("Pagination")).toBeVisible();
+    await expect(page.getByText(/page 1 of/i)).toBeVisible();
+    await page.getByRole("button", { name: /next/i }).click();
+    await expect(page.getByText(/page 2 of/i)).toBeVisible();
   });
 
   test("clicking Company header sorts by company name", async ({ page }) => {

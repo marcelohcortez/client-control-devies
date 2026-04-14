@@ -549,48 +549,54 @@ All of these must be implemented — they are part of the project scope, not opt
 ### Test Suites
 
 #### `auth.spec.ts`
-- [ ] Shows login page at `/login`
-- [ ] Redirects unauthenticated users from protected routes to `/login`
-- [ ] Fails login with wrong credentials (shows error message)
-- [ ] Successfully logs in with valid credentials and redirects to `/clients`
-- [ ] Logs out and redirects to `/login`
+- [x] Shows login page at `/login`
+- [x] Redirects unauthenticated users from protected routes to `/login`
+- [x] Fails login with wrong credentials (shows error message)
+- [x] Successfully logs in with valid credentials and redirects to `/clients`
+- [x] Logs out and redirects to `/login`
 - [ ] Access token refresh — silent token renewal on expiry
 
 #### `clients-list.spec.ts`
-- [ ] Displays clients list with company name and contact name
-- [ ] Paginates 10 records per page
-- [ ] Next/previous page navigation works
-- [ ] Filter by company name
-- [ ] Filter by contact name
-- [ ] Filter by email
-- [ ] Filter by phone
-- [ ] Filter by type of business
-- [ ] Filter by added by
-- [ ] Click on a client row navigates to the client detail page
+- [x] Displays clients list with company name and contact name
+- [x] Paginates 10 records per page
+- [x] Next/previous page navigation works
+- [x] Filter by company name
+- [x] Filter by contact name
+- [x] Filter by email
+- [x] Filter by phone
+- [x] Filter by type of business
+- [x] Filter by added by
+- [x] Click on a client row navigates to the client detail page
+- [x] Page size selector changes results per page
+- [x] Sort by Company and Contact columns
 
 #### `client-detail.spec.ts`
-- [ ] Displays all client fields on the detail page
-- [ ] Shows Edit and Delete buttons
+- [x] Displays all client fields on the detail page
+- [x] Shows Edit and Delete buttons
+- [x] `added_by` is automatically set to the logged-in username
+- [x] Additional contacts section is visible when contacts exist
 
 #### `client-add.spec.ts`
-- [ ] "Add Client" button navigates to `/clients/new`
-- [ ] Fails to submit if company name is empty
-- [ ] Successfully creates a client with company name only
-- [ ] Successfully creates a client with all fields filled
-- [ ] Redirects to new client's detail page after creation
-- [ ] `added_by` is automatically set to the logged-in username
+- [x] "Add Client" button navigates to `/clients/new`
+- [x] Fails to submit if company name is empty
+- [x] Successfully creates a client with company name only
+- [x] Successfully creates a client with all fields filled
+- [x] Redirects to new client's detail page after creation
+- [x] `added_by` is automatically set to the logged-in username
+- [x] Additional contacts can be added and appear on the detail page
 
 #### `client-edit.spec.ts`
-- [ ] Edit button navigates to `/clients/:id/edit`
-- [ ] Form is pre-populated with current values
-- [ ] Successfully saves edited fields
-- [ ] `last_edited_by` is automatically updated after edit
+- [x] Edit button navigates to `/clients/:id/edit`
+- [x] Form is pre-populated with current values
+- [x] Successfully saves edited fields
+- [x] `last_edited_by` is automatically updated after edit
+- [x] Additional contact added via edit form appears on detail page
 
 #### `client-delete.spec.ts`
-- [ ] Delete button opens confirmation modal
-- [ ] Confirmation modal requires typing "delete" to enable confirm button
-- [ ] Typing anything other than "delete" keeps confirm button disabled
-- [ ] Confirming deletion removes the client and redirects to `/clients`
+- [x] Delete button opens confirmation modal
+- [x] Confirmation modal requires typing "delete" to enable confirm button
+- [x] Typing anything other than "delete" keeps confirm button disabled
+- [x] Confirming deletion removes the client and redirects to `/clients`
 
 ---
 
@@ -750,7 +756,8 @@ Tasks are listed in the order they must be completed. Each checkbox represents a
 - [x] **T-72** Accept URL inputs without protocol (`www.`, bare domain, `http://`, `https://`) — auto-prepend `https://` on save
 - [x] **T-73** Sanitize all user-input fields: trim whitespace on frontend and backend (Zod `.trim()` on all string fields)
 - [x] **T-74** Sort clients list by Company or Contact column: click header to sort ascending, click again to sort descending; `⇅` / `▲` / `▼` indicator; server-side ORDER BY
+- [x] **T-75** Comprehensive Playwright coverage: audit all spec features against test suites; add missing tests for all filter types, pagination, page-size selector, sort columns, `added_by`/`last_edited_by` auto-set, additional contacts (add & edit flows), and protected route redirect
 
 ---
 
-*Last updated: 2026-04-14 — Phases 0–7 complete (T-01 → T-70); UX & security polish done (T-71–T-74). Deployed to https://client-control-devies-api.vercel.app*
+*Last updated: 2026-04-15 — Phases 0–7 complete (T-01 → T-70); UX & security polish done (T-71–T-74); full Playwright coverage achieved (T-75); 42 tests passing. Deployed to https://client-control-devies-api.vercel.app*

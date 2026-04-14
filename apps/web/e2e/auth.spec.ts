@@ -19,6 +19,11 @@ test.describe("Auth", () => {
     await expect(page).toHaveURL("/login");
   });
 
+  test("redirects unauthenticated users from /clients/:id to /login", async ({ page }) => {
+    await page.goto("/clients/1");
+    await expect(page).toHaveURL("/login");
+  });
+
   test("fails login with wrong credentials", async ({ page }) => {
     await page.goto("/login");
     await page.getByLabel("Username").fill("wrong");

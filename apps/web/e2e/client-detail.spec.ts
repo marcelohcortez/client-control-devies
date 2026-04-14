@@ -1,5 +1,5 @@
 import { test, expect } from "@playwright/test";
-import { login } from "./helpers";
+import { login, TEST_USER } from "./helpers";
 
 test.describe("Client Detail", () => {
   test.beforeEach(async ({ page }) => {
@@ -22,5 +22,27 @@ test.describe("Client Detail", () => {
   test("shows Edit and Delete buttons", async ({ page }) => {
     await expect(page.getByRole("button", { name: /edit/i })).toBeVisible();
     await expect(page.getByRole("button", { name: /delete/i })).toBeVisible();
+  });
+
+  test("added_by is automatically set to the logged-in username", async ({ page }) => {
+    const addedByValue = page.locator("xpath=//dt[normalize-space()='Added by']/following-sibling::dd[1]");
+    await expect(addedByValue).toHaveText(TEST_USER.username);
+  });
+});
+
+test.describe("Client Detail - additional contacts", () => {
+  test.beforeEach(async ({ page }) => {
+    await login(page);
+    await page.goto("/clients/new");
+    await page.getByLabel("Company name").fill("Contacts Detail Test Co");
+    await page.getByRole("button", { name: /add contact/i }).click();
+    await page.getByLabel("Name", { exact: true }).fill("Extra Person");
+    await page.getByRole("button", { name: /add client/i }).click();
+    await page.waitForURL(/\/clients\/\d+/);
+  });
+
+  test("shows additional contacts section with contact name", async ({ page }) => {
+    await expect(page.getByRole("heading", { name: /additional contacts/i })).toBeVisible();
+    await expect(page.getByText("Extra Person")).toBeVisible();
   });
 });
