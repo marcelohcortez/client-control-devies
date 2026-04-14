@@ -63,15 +63,15 @@ router.get("/:id", async (req, res) => {
 
 // ── POST /api/clients ─────────────────────────────────────────────────────────
 const createSchema = z.object({
-  company_name: z.string().min(1, "Company name is required"),
-  contact_name: z.string().optional(),
-  role: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal("")),
-  linkedin: z.string().url().optional().or(z.literal("")),
-  website_url: z.string().url().optional().or(z.literal("")),
-  type_of_business: z.string().optional(),
-  status: z.string().optional(),
+  company_name: z.string().min(1, "Company name is required").trim(),
+  contact_name: z.string().trim().optional(),
+  role: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
+  email: z.string().trim().email().optional().or(z.literal("")),
+  linkedin: z.string().trim().optional(),
+  website_url: z.string().trim().optional(),
+  type_of_business: z.string().trim().optional(),
+  status: z.string().trim().optional(),
 });
 
 router.post("/", async (req, res) => {
@@ -140,11 +140,11 @@ router.delete("/:id", async (req, res) => {
 // ── Contact routes ────────────────────────────────────────────────────────────
 
 const contactSchema = z.object({
-  name: z.string().optional(),
-  role: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal("")),
-  linkedin: z.string().url().optional().or(z.literal("")),
+  name: z.string().trim().optional(),
+  role: z.string().trim().optional(),
+  phone: z.string().trim().optional(),
+  email: z.string().trim().email().optional().or(z.literal("")),
+  linkedin: z.string().trim().optional(),
 });
 
 // POST /api/clients/:id/contacts

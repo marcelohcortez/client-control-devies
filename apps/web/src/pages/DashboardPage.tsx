@@ -55,12 +55,9 @@ export default function DashboardPage() {
       <main className={styles.main}>
         <div className={styles.toolbar}>
           <h2 className={styles.pageTitle}>Clients</h2>
-          <div className={styles.toolbarRight}>
-            <PageSizeSelector value={limit} onChange={(s) => { setLimit(s); setPage(1); }} />
-            <Link to="/clients/new" className={styles.addBtn}>
-              + Add Client
-            </Link>
-          </div>
+          <Link to="/clients/new" className={styles.addBtn}>
+            + Add Client
+          </Link>
         </div>
 
         <FilterBar onFilter={handleFilter} />
@@ -121,6 +118,9 @@ export default function DashboardPage() {
                 onPageChange={setPage}
               />
             )}
+            <div className={styles.pageSizeRow}>
+              <PageSizeSelector value={limit} onChange={(s) => { setLimit(s); setPage(1); }} />
+            </div>
           </>
         )}
       </main>

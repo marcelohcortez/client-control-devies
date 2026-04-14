@@ -61,10 +61,10 @@
   margin-bottom: 1.25rem;
 }
 
-.toolbarRight {
+.pageSizeRow {
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  justify-content: flex-end;
+  margin-top: 0.5rem;
 }
 
 .pageTitle {

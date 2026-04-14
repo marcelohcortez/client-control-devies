@@ -75,10 +75,10 @@ export default function ContactFieldGroup({ contact, index, onChange, onRemove }
           <label htmlFor={`contact_${index}_linkedin`}>LinkedIn URL</label>
           <input
             id={`contact_${index}_linkedin`}
-            type="url"
+            type="text"
             value={contact.linkedin}
             onChange={(e) => onChange(index, "linkedin", e.target.value)}
-            placeholder="https://linkedin.com/in/..."
+            placeholder="linkedin.com/in/..."
           />
         </div>
       </div>

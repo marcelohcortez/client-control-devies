@@ -62,6 +62,17 @@ export default function ClientForm({ initialValues, additionalContacts, onSubmit
     };
   }
 
+  function normalizeUrl(raw: string): string {
+    const trimmed = raw.trim();
+    if (!trimmed) return trimmed;
+    if (/^https?:\/\//i.test(trimmed)) return trimmed;
+    return `https://${trimmed}`;
+  }
+
+  function sanitize(value: string): string {
+    return value.trim();
+  }
+
   function handleContactChange(index: number, field: keyof ContactDraft, value: string) {
     setContacts((prev) => prev.map((c, i) => (i === index ? { ...c, [field]: value } : c)));
   }
@@ -86,30 +97,25 @@ export default function ClientForm({ initialValues, additionalContacts, onSubmit
     setLoading(true);
     try {
       const payload: CreateClientInput = {
-        company_name: values.company_name.trim(),
-        ...(values.contact_name && { contact_name: values.contact_name }),
-        ...(values.role && { role: values.role }),
-        ...(values.phone && { phone: values.phone }),
-        ...(values.email && { email: values.email }),
-        ...(values.linkedin && { linkedin: values.linkedin }),
-        ...(values.website_url && {
-          website_url:
-            values.website_url.match(/^https?:\/\//)
-              ? values.website_url
-              : `https://${values.website_url}`,
-        }),
-        ...(values.type_of_business && { type_of_business: values.type_of_business }),
-        ...(values.status && { status: values.status }),
+        company_name: sanitize(values.company_name),
+        ...(values.contact_name.trim() && { contact_name: sanitize(values.contact_name) }),
+        ...(values.role.trim() && { role: sanitize(values.role) }),
+        ...(values.phone.trim() && { phone: sanitize(values.phone) }),
+        ...(values.email.trim() && { email: sanitize(values.email) }),
+        ...(values.linkedin.trim() && { linkedin: normalizeUrl(values.linkedin) }),
+        ...(values.website_url.trim() && { website_url: normalizeUrl(values.website_url) }),
+        ...(values.type_of_business.trim() && { type_of_business: sanitize(values.type_of_business) }),
+        ...(values.status.trim() && { status: sanitize(values.status) }),
       };
 
       const contactInputs: CreateContactInput[] = contacts
         .filter((c) => c.name || c.role || c.phone || c.email || c.linkedin)
         .map((c) => ({
-          ...(c.name && { name: c.name }),
-          ...(c.role && { role: c.role }),
-          ...(c.phone && { phone: c.phone }),
-          ...(c.email && { email: c.email }),
-          ...(c.linkedin && { linkedin: c.linkedin }),
+          ...(c.name.trim() && { name: sanitize(c.name) }),
+          ...(c.role.trim() && { role: sanitize(c.role) }),
+          ...(c.phone.trim() && { phone: sanitize(c.phone) }),
+          ...(c.email.trim() && { email: sanitize(c.email) }),
+          ...(c.linkedin.trim() && { linkedin: normalizeUrl(c.linkedin) }),
         }));
 
       await onSubmit(payload, contactInputs);
@@ -185,10 +191,10 @@ export default function ClientForm({ initialValues, additionalContacts, onSubmit
           <label htmlFor="linkedin">LinkedIn URL</label>
           <input
             id="linkedin"
-            type="url"
+            type="text"
             value={values.linkedin}
             onChange={set("linkedin")}
-            placeholder="https://linkedin.com/in/..."
+            placeholder="linkedin.com/in/..."
           />
         </div>
 
@@ -196,10 +202,10 @@ export default function ClientForm({ initialValues, additionalContacts, onSubmit
           <label htmlFor="website_url">Website URL</label>
           <input
             id="website_url"
-            type="url"
+            type="text"
             value={values.website_url}
             onChange={set("website_url")}
-            placeholder="https://..."
+            placeholder="company.com"
           />
         </div>
 

@@ -35,7 +35,7 @@ function refreshCookieOptions() {
 
 // ── POST /api/auth/login ──────────────────────────────────────────────────────
 const loginSchema = z.object({
-  username: z.string().min(1),
+  username: z.string().min(1).trim(),
   password: z.string().min(1),
 });
 

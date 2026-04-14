@@ -745,6 +745,11 @@ Tasks are listed in the order they must be completed. Each checkbox represents a
 - [x] **T-69** Run full Playwright suite; fix any broken tests; update tests to reflect new columns/behaviour
 - [x] **T-70** Deploy Phase 7 to production and validate
 
+#### UX & security polish
+- [x] **T-71** Move per-page selector below pagination
+- [x] **T-72** Accept URL inputs without protocol (`www.`, bare domain, `http://`, `https://`) — auto-prepend `https://` on save
+- [x] **T-73** Sanitize all user-input fields: trim whitespace on frontend and backend (Zod `.trim()` on all string fields)
+
 ---
 
-*Last updated: 2026-07-14 — Phases 0–7 complete (T-01 → T-70). Deployed to https://client-control-devies-api.vercel.app*
+*Last updated: 2026-04-14 — Phases 0–7 complete (T-01 → T-70); UX & security polish done (T-71–T-73). Deployed to https://client-control-devies-api.vercel.app*
