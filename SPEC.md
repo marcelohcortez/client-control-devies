@@ -721,30 +721,30 @@ Tasks are listed in the order they must be completed. Each checkbox represents a
 ### Phase 7 — Improvements
 
 #### Multi-contact support
-- [ ] **T-54** Add `contacts` migration: create `contacts` table with `client_id` FK + cascade delete
-- [ ] **T-55** Add `contactModel.ts` — create, update, delete, list by client
-- [ ] **T-56** Update `GET /api/clients/:id` to include `additionalContacts` array
-- [ ] **T-57** Add `POST /api/clients/:id/contacts` route
-- [ ] **T-58** Add `PUT /api/clients/:id/contacts/:contactId` route
-- [ ] **T-59** Add `DELETE /api/clients/:id/contacts/:contactId` route
-- [ ] **T-60** Update shared types: add `Contact` type; add `additionalContacts` to `Client`
-- [ ] **T-61** Build `ContactFieldGroup` component (name, role, phone, email, linkedin + remove button)
-- [ ] **T-62** Update `ClientForm` to include additional contacts section with "Add contact" button
-- [ ] **T-63** Update `ClientDetailPage` to display additional contacts list
-- [ ] **T-64** Wire add/edit form to POST/PUT/DELETE contact API endpoints on save
+- [x] **T-54** Add `contacts` migration: create `contacts` table with `client_id` FK + cascade delete
+- [x] **T-55** Add `contactModel.ts` — create, update, delete, list by client
+- [x] **T-56** Update `GET /api/clients/:id` to include `additionalContacts` array
+- [x] **T-57** Add `POST /api/clients/:id/contacts` route
+- [x] **T-58** Add `PUT /api/clients/:id/contacts/:contactId` route
+- [x] **T-59** Add `DELETE /api/clients/:id/contacts/:contactId` route
+- [x] **T-60** Update shared types: add `Contact` type; add `additionalContacts` to `Client`
+- [x] **T-61** Build `ContactFieldGroup` component (name, role, phone, email, linkedin + remove button)
+- [x] **T-62** Update `ClientForm` to include additional contacts section with "Add contact" button
+- [x] **T-63** Update `ClientDetailPage` to display additional contacts list
+- [x] **T-64** Wire add/edit form to POST/PUT/DELETE contact API endpoints on save
 
 #### Collapsible filter bar
-- [ ] **T-65** Update `FilterBar` to be collapsible: add "Filter" title + toggle button; collapsed by default
+- [x] **T-65** Update `FilterBar` to be collapsible: add "Filter" title + toggle button; collapsed by default
 
 #### Configurable page size
-- [ ] **T-66** Build `PageSizeSelector` component (dropdown: 5, 10, 15, …, 50)
-- [ ] **T-67** Wire `PageSizeSelector` into `DashboardPage` — passes `limit` param to API, resets to page 1 on change
+- [x] **T-66** Build `PageSizeSelector` component (dropdown: 5, 10, 15, …, 50)
+- [x] **T-67** Wire `PageSizeSelector` into `DashboardPage` — passes `limit` param to API, resets to page 1 on change
 
 #### Updated list columns
-- [ ] **T-68** Update dashboard table to show: Company name, Contact name, Phone, Email
-- [ ] **T-69** Run full Playwright suite; fix any broken tests; update tests to reflect new columns/behaviour
-- [ ] **T-70** Deploy Phase 7 to production and validate
+- [x] **T-68** Update dashboard table to show: Company name, Contact name, Phone, Email
+- [x] **T-69** Run full Playwright suite; fix any broken tests; update tests to reflect new columns/behaviour
+- [x] **T-70** Deploy Phase 7 to production and validate
 
 ---
 
-*Last updated: 2026-04-14 — Phases 0–6 complete (T-01 → T-53). Phase 7 (improvements) defined (T-54 → T-70). Deployed to https://client-control-devies-api.vercel.app*
+*Last updated: 2026-07-14 — Phases 0–7 complete (T-01 → T-70). Deployed to https://client-control-devies-api.vercel.app*
