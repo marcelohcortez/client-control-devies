@@ -60,7 +60,12 @@ export default function ClientForm({ initialValues, onSubmit, submitLabel }: Pro
         ...(values.phone && { phone: values.phone }),
         ...(values.email && { email: values.email }),
         ...(values.linkedin && { linkedin: values.linkedin }),
-        ...(values.website_url && { website_url: values.website_url }),
+        ...(values.website_url && {
+          website_url:
+            values.website_url.match(/^https?:\/\//)
+              ? values.website_url
+              : `https://${values.website_url}`,
+        }),
         ...(values.type_of_business && { type_of_business: values.type_of_business }),
         ...(values.status && { status: values.status }),
       };
