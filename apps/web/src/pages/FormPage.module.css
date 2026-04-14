@@ -1,0 +1,28 @@
+.page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.header {
+  margin-bottom: 1.5rem;
+}
+
+.back {
+  background: none;
+  border: none;
+  color: #2563eb;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+  padding: 0;
+}
+
+.back:hover {
+  text-decoration: underline;
+}
+
+.title {
+  font-size: 1.4rem;
+  font-weight: 700;
+}

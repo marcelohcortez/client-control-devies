@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+dist/
+build/
+.output/
+.vercel/output/
+
+# Environment secrets — never commit
+.env.local
+.env.prod
+.env.*.local
+
+# Turbo cache
+.turbo/
+
+# TypeScript build info
+*.tsbuildinfo
+
+# Logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+
+# Playwright
+apps/web/test-results/
+apps/web/playwright-report/
+apps/web/.playwright/
+.vercel

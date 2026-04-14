@@ -1,0 +1,13 @@
+{
+  "name": "client-control",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --parallel --filter './apps/*' dev",
+    "build": "pnpm --filter './apps/*' build",
+    "lint": "eslint .",
+    "test:e2e": "pnpm --filter web test:e2e",
+    "migrate": "pnpm --filter api migrate"
+  },
+  "devDependencies": {}
+}
