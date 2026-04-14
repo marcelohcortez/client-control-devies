@@ -23,7 +23,7 @@ router.use(requireAuth);
 // ── GET /api/clients ──────────────────────────────────────────────────────────
 const listQuerySchema = z.object({
   page: z.coerce.number().int().positive().optional().default(1),
-  limit: z.coerce.number().int().positive().max(100).optional().default(10),
+  limit: z.coerce.number().int().positive().max(50).optional().default(10),
   companyName: z.string().optional(),
   contactName: z.string().optional(),
   email: z.string().optional(),

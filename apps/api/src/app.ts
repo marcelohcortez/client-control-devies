@@ -4,6 +4,7 @@ import helmet from "helmet";
 import cors from "cors";
 import authRoutes from "./routes/auth";
 import clientRoutes from "./routes/clients";
+import { apiRateLimiter } from "./middleware/rateLimiter";
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // ── Routes ────────────────────────────────────────────────────────────────────
+app.use("/api", apiRateLimiter);
 app.get("/api/health", (_req, res) => { res.json({ ok: true }); });
 app.use("/api/auth", authRoutes);
 app.use("/api/clients", clientRoutes);

@@ -294,7 +294,7 @@ Query parameters (all optional):
 | Param | Type | Description |
 |-------|------|-------------|
 | `page` | number | Page number, default `1` |
-| `limit` | number | Items per page, default `10` |
+| `limit` | number | Items per page, default `10`, **max `50`** |
 | `companyName` | string | Filter by company name (case-insensitive, partial) |
 | `contactName` | string | Filter by contact name |
 | `email` | string | Filter by email |
@@ -536,6 +536,7 @@ All of these must be implemented — they are part of the project scope, not opt
 | 12 | No secrets in code/VCS | Both | `.env.local` and `.env.prod` in `.gitignore` |
 | 13 | Access token in memory only | Frontend | Never stored in `localStorage` or `sessionStorage` |
 | 14 | Protected routes | Frontend | Server validates JWT on every protected API call |
+| 15 | General API rate limiting | Backend | `express-rate-limit`: max 200 requests / 15 min per IP on all `/api/*` routes (configurable via `API_RATE_LIMIT` env var) |
 
 ---
 
@@ -554,7 +555,7 @@ All of these must be implemented — they are part of the project scope, not opt
 - [x] Fails login with wrong credentials (shows error message)
 - [x] Successfully logs in with valid credentials and redirects to `/clients`
 - [x] Logs out and redirects to `/login`
-- [ ] Access token refresh — silent token renewal on expiry
+- [x] Access token refresh — silent token renewal on expiry
 
 #### `clients-list.spec.ts`
 - [x] Displays clients list with company name and contact name
@@ -757,7 +758,9 @@ Tasks are listed in the order they must be completed. Each checkbox represents a
 - [x] **T-73** Sanitize all user-input fields: trim whitespace on frontend and backend (Zod `.trim()` on all string fields)
 - [x] **T-74** Sort clients list by Company or Contact column: click header to sort ascending, click again to sort descending; `⇅` / `▲` / `▼` indicator; server-side ORDER BY
 - [x] **T-75** Comprehensive Playwright coverage: audit all spec features against test suites; add missing tests for all filter types, pagination, page-size selector, sort columns, `added_by`/`last_edited_by` auto-set, additional contacts (add & edit flows), and protected route redirect
+- [x] **T-76** Add general API rate limiter (`express-rate-limit`) to all `/api/*` routes — max 200 req/15 min in production; add `API_RATE_LIMIT` env var; cap `limit` query param at 50 to match UI maximum
+- [x] **T-77** Playwright test for silent token refresh: simulate 401 via `page.route()`, verify Axios interceptor calls `/refresh` and retries the original request
 
 ---
 
-*Last updated: 2026-04-15 — Phases 0–7 complete (T-01 → T-70); UX & security polish done (T-71–T-74); full Playwright coverage achieved (T-75); 42 tests passing. Deployed to https://client-control-devies-api.vercel.app*
+*Last updated: 2026-04-15 — Phases 0–7 complete (T-01 → T-70); UX & security polish (T-71–T-74); full Playwright coverage + token refresh test (T-75, T-77); general API rate limiting + pagination cap (T-76). Deployed to https://client-control-devies-api.vercel.app*

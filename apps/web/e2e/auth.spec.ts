@@ -44,4 +44,33 @@ test.describe("Auth", () => {
     await page.getByRole("button", { name: "Logout" }).click();
     await expect(page).toHaveURL("/login");
   });
+
+  test("silently refreshes token on 401 and retries original request", async ({ page }) => {
+    await login(page);
+    await expect(page).toHaveURL("/clients");
+    await expect(page.getByRole("table")).toBeVisible();
+
+    // Intercept the first /api/clients list call, return 401 to simulate expired access token
+    let triggered = false;
+    await page.route(/\/api\/clients(\?.*)?$/, async (route) => {
+      if (!triggered) {
+        triggered = true;
+        await route.fulfill({
+          status: 401,
+          contentType: "application/json",
+          body: JSON.stringify({ error: "Unauthorized" }),
+        });
+      } else {
+        await route.continue();
+      }
+    });
+
+    // Navigate to a non-list page then back — the fresh /api/clients call hits the 401
+    await page.goto("/clients/new");
+    await page.goto("/clients");
+
+    // The Axios response interceptor should silently call /refresh, get a new token,
+    // and retry the original /api/clients request — list must render successfully
+    await expect(page.getByRole("table")).toBeVisible({ timeout: 10000 });
+  });
 });
