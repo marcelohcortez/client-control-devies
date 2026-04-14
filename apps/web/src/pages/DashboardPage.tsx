@@ -15,11 +15,28 @@ export default function DashboardPage() {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [filters, setFilters] = useState<Omit<ClientFilters, "page" | "limit">>();
+  const [sortBy, setSortBy] = useState<"company_name" | "contact_name" | undefined>();
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("asc");
 
   const { clients, pagination, loading, error } = useClientList(
-    { ...filters, page, limit },
+    {
+      ...filters,
+      page,
+      limit,
+      ...(sortBy && { sortBy, sortDir }),
+    },
     apiGetClients
   );
+
+  function handleSort(col: "company_name" | "contact_name") {
+    if (sortBy === col) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+    } else {
+      setSortBy(col);
+      setSortDir("asc");
+    }
+    setPage(1);
+  }
 
   const handleFilter = useCallback(
     (f: Omit<ClientFilters, "page" | "limit">) => {
@@ -75,8 +92,28 @@ export default function DashboardPage() {
             <table className={styles.table}>
               <thead>
                 <tr>
-                  <th scope="col">Company</th>
-                  <th scope="col">Contact</th>
+                  <th
+                    scope="col"
+                    className={styles.sortable}
+                    onClick={() => handleSort("company_name")}
+                    aria-sort={sortBy === "company_name" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                  >
+                    Company
+                    <span className={styles.sortIcon} aria-hidden="true">
+                      {sortBy === "company_name" ? (sortDir === "asc" ? " ▲" : " ▼") : " ⇅"}
+                    </span>
+                  </th>
+                  <th
+                    scope="col"
+                    className={styles.sortable}
+                    onClick={() => handleSort("contact_name")}
+                    aria-sort={sortBy === "contact_name" ? (sortDir === "asc" ? "ascending" : "descending") : "none"}
+                  >
+                    Contact
+                    <span className={styles.sortIcon} aria-hidden="true">
+                      {sortBy === "contact_name" ? (sortDir === "asc" ? " ▲" : " ▼") : " ⇅"}
+                    </span>
+                  </th>
                   <th scope="col">Phone</th>
                   <th scope="col">Email</th>
                 </tr>

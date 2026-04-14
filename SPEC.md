@@ -749,7 +749,8 @@ Tasks are listed in the order they must be completed. Each checkbox represents a
 - [x] **T-71** Move per-page selector below pagination
 - [x] **T-72** Accept URL inputs without protocol (`www.`, bare domain, `http://`, `https://`) — auto-prepend `https://` on save
 - [x] **T-73** Sanitize all user-input fields: trim whitespace on frontend and backend (Zod `.trim()` on all string fields)
+- [x] **T-74** Sort clients list by Company or Contact column: click header to sort ascending, click again to sort descending; `⇅` / `▲` / `▼` indicator; server-side ORDER BY
 
 ---
 
-*Last updated: 2026-04-14 — Phases 0–7 complete (T-01 → T-70); UX & security polish done (T-71–T-73). Deployed to https://client-control-devies-api.vercel.app*
+*Last updated: 2026-04-14 — Phases 0–7 complete (T-01 → T-70); UX & security polish done (T-71–T-74). Deployed to https://client-control-devies-api.vercel.app*

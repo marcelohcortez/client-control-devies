@@ -39,7 +39,13 @@ export async function listClients(
     addedBy,
     page = 1,
     limit = 10,
+    sortBy,
+    sortDir,
   } = filters;
+
+  const ALLOWED_SORT_COLS = ["company_name", "contact_name"] as const;
+  const col = sortBy && (ALLOWED_SORT_COLS as readonly string[]).includes(sortBy) ? sortBy : null;
+  const dir = sortDir === "asc" ? "ASC" : sortDir === "desc" ? "DESC" : null;
 
   const conditions: string[] = [];
   const args: InValue[] = [];
@@ -82,8 +88,9 @@ export async function listClients(
 
   // Fetch page
   const offset = (page - 1) * limit;
+  const orderBy = col && dir ? `LOWER(${col}) ${dir}` : "created_at DESC";
   const dataResult = await db.execute({
-    sql: `SELECT * FROM clients ${where} ORDER BY created_at DESC LIMIT ? OFFSET ?`,
+    sql: `SELECT * FROM clients ${where} ORDER BY ${orderBy} LIMIT ? OFFSET ?`,
     args: [...args, limit, offset],
   });
 

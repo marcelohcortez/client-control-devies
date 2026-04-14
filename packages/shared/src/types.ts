@@ -100,6 +100,8 @@ export interface ClientFilters {
   addedBy?: string;
   page?: number;
   limit?: number;
+  sortBy?: "company_name" | "contact_name";
+  sortDir?: "asc" | "desc";
 }
 
 // ─────────────────────────────────────────────

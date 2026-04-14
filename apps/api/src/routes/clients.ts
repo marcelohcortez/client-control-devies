@@ -30,6 +30,8 @@ const listQuerySchema = z.object({
   phone: z.string().optional(),
   typeOfBusiness: z.string().optional(),
   addedBy: z.string().optional(),
+  sortBy: z.enum(["company_name", "contact_name"]).optional(),
+  sortDir: z.enum(["asc", "desc"]).optional(),
 });
 
 router.get("/", async (req, res) => {
