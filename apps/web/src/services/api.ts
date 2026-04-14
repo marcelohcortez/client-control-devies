@@ -8,6 +8,8 @@ import type {
   UpdateClientInput,
   PaginatedResponse,
   ClientFilters,
+  Contact,
+  CreateContactInput,
 } from "@client-control/shared";
 import { refreshAccessToken } from "../context/AuthContext";
 
@@ -136,6 +138,30 @@ export async function apiUpdateClient(
 
 export async function apiDeleteClient(id: number): Promise<void> {
   await api.delete(`/api/clients/${id}`);
+}
+
+export async function apiAddContact(
+  clientId: number,
+  input: CreateContactInput
+): Promise<Contact> {
+  const res = await api.post<Contact>(`/api/clients/${clientId}/contacts`, input);
+  return res.data;
+}
+
+export async function apiUpdateContact(
+  clientId: number,
+  contactId: number,
+  input: Partial<CreateContactInput>
+): Promise<Contact> {
+  const res = await api.put<Contact>(`/api/clients/${clientId}/contacts/${contactId}`, input);
+  return res.data;
+}
+
+export async function apiDeleteContact(
+  clientId: number,
+  contactId: number
+): Promise<void> {
+  await api.delete(`/api/clients/${clientId}/contacts/${contactId}`);
 }
 
 export default api;

@@ -199,6 +199,23 @@ CREATE TABLE IF NOT EXISTS clients (
 );
 ```
 
+### `contacts` table
+
+Additional contacts per company (no limit). The primary contact fields on `clients` remain for backwards compatibility; additional contacts live here.
+
+```sql
+CREATE TABLE IF NOT EXISTS contacts (
+  id         INTEGER PRIMARY KEY AUTOINCREMENT,
+  client_id  INTEGER NOT NULL REFERENCES clients(id) ON DELETE CASCADE,
+  name       TEXT,
+  role       TEXT,
+  phone      TEXT,
+  email      TEXT,
+  linkedin   TEXT,
+  created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+```
+
 ### `refresh_tokens` table
 
 ```sql
@@ -297,8 +314,48 @@ Response `200`:
 
 #### `GET /api/clients/:id`
 
-Response `200`: Full client object.
+Response `200`: Full client object including an `additionalContacts` array (from `contacts` table).
 Response `404`: Client not found.
+
+---
+
+#### `POST /api/clients/:id/contacts`
+
+Add an additional contact to a client.
+
+Request body:
+```json
+{
+  "name": "string?",
+  "role": "string?",
+  "phone": "string?",
+  "email": "string?",
+  "linkedin": "string?"
+}
+```
+
+Response `201`: Created contact object.
+Response `404`: Client not found.
+
+---
+
+#### `PUT /api/clients/:id/contacts/:contactId`
+
+Update an additional contact.
+
+Request body: same shape as POST (all optional).
+
+Response `200`: Updated contact object.
+Response `404`: Client or contact not found.
+
+---
+
+#### `DELETE /api/clients/:id/contacts/:contactId`
+
+Remove an additional contact.
+
+Response `200`: `{ "message": "Contact deleted" }`
+Response `404`: Client or contact not found.
 
 ---
 
@@ -374,16 +431,14 @@ Response `404`: Client not found.
 
 - **Header**: App name + logged-in username + Logout button
 - **"Add Client" button**: navigates to `/clients/new`
-- **Filter bar** (debounced inputs):
-  - Company name
-  - Contact name
-  - Email
-  - Phone
-  - Type of Business
-  - Added by
-- **Clients list** (paginated, 10 per page):
-  - Each row shows: Company name, Contact name
+- **Filter bar** (collapsible, debounced inputs):
+  - Labelled "Filter" with a toggle button to expand/collapse
+  - Collapsed by default
+  - Filter inputs: Company name, Contact name, Email, Phone, Type of Business, Added by
+- **Clients list** (paginated):
+  - Each row shows: **Company name, Contact name, Phone, Email**
   - Click on a row → navigate to `/clients/:id`
+- **Page size selector**: dropdown to choose items per page — options: 5, 10, 15, 20, 25, 30, 35, 40, 45, 50 (default 10)
 - **Pagination controls**: prev/next + page count display
 
 ---
@@ -401,6 +456,7 @@ Displays all fields:
 - Type of Business
 - Status
 - Added by / Last edited by / Dates
+- **Additional contacts**: list of all contacts from `contacts` table for this client (name, role, phone, email, linkedin)
 
 Actions:
 - **Edit button** → navigate to `/clients/:id/edit`
@@ -423,6 +479,12 @@ Inputs:
 | Type of Business | text | No |
 | Status | textarea | No |
 
+**Additional contacts section:**
+- "Add contact" button appends a new contact group with fields: Name, Role, Phone, Email, LinkedIn
+- No limit on the number of additional contacts
+- Each additional contact has a remove (×) button
+- Additional contacts are saved to the `contacts` table after the main client is created
+
 - `added_by` and `last_edited_by` are NOT shown — set automatically server-side.
 - On success: redirect to the new client's detail page.
 
@@ -431,6 +493,9 @@ Inputs:
 #### Edit Client Form (`/clients/:id/edit`)
 
 Same fields as Add form, pre-populated with current values.
+- Additional contacts are pre-populated from the `contacts` table.
+- Existing additional contacts can be edited in-place or removed.
+- New additional contacts can be added with "Add contact" button.
 - `last_edited_by` is updated automatically server-side.
 - On success: redirect to `/clients/:id`.
 
@@ -444,8 +509,10 @@ Same fields as Add form, pre-populated with current values.
 | `AuthContext` | Provides `user`, `accessToken`, `login()`, `logout()`, `refreshToken()` |
 | `ConfirmDeleteModal` | Requires typing "delete" before confirming deletion |
 | `Pagination` | Reusable pagination controls |
-| `FilterBar` | Debounced filter inputs for the dashboard |
+| `FilterBar` | Collapsible filter panel with "Filter" title label; debounced inputs |
 | `ClientForm` | Shared form used by both Add and Edit pages |
+| `ContactFieldGroup` | Repeatable group of fields (name, role, phone, email, linkedin) for additional contacts |
+| `PageSizeSelector` | Dropdown for selecting items per page (5–50 in increments of 5) |
 
 ---
 
@@ -651,6 +718,33 @@ Tasks are listed in the order they must be completed. Each checkbox represents a
 - [x] **T-52** Deploy and verify production build on Vercel
 - [x] **T-53** Validate all Playwright tests pass against the production URL
 
+### Phase 7 — Improvements
+
+#### Multi-contact support
+- [ ] **T-54** Add `contacts` migration: create `contacts` table with `client_id` FK + cascade delete
+- [ ] **T-55** Add `contactModel.ts` — create, update, delete, list by client
+- [ ] **T-56** Update `GET /api/clients/:id` to include `additionalContacts` array
+- [ ] **T-57** Add `POST /api/clients/:id/contacts` route
+- [ ] **T-58** Add `PUT /api/clients/:id/contacts/:contactId` route
+- [ ] **T-59** Add `DELETE /api/clients/:id/contacts/:contactId` route
+- [ ] **T-60** Update shared types: add `Contact` type; add `additionalContacts` to `Client`
+- [ ] **T-61** Build `ContactFieldGroup` component (name, role, phone, email, linkedin + remove button)
+- [ ] **T-62** Update `ClientForm` to include additional contacts section with "Add contact" button
+- [ ] **T-63** Update `ClientDetailPage` to display additional contacts list
+- [ ] **T-64** Wire add/edit form to POST/PUT/DELETE contact API endpoints on save
+
+#### Collapsible filter bar
+- [ ] **T-65** Update `FilterBar` to be collapsible: add "Filter" title + toggle button; collapsed by default
+
+#### Configurable page size
+- [ ] **T-66** Build `PageSizeSelector` component (dropdown: 5, 10, 15, …, 50)
+- [ ] **T-67** Wire `PageSizeSelector` into `DashboardPage` — passes `limit` param to API, resets to page 1 on change
+
+#### Updated list columns
+- [ ] **T-68** Update dashboard table to show: Company name, Contact name, Phone, Email
+- [ ] **T-69** Run full Playwright suite; fix any broken tests; update tests to reflect new columns/behaviour
+- [ ] **T-70** Deploy Phase 7 to production and validate
+
 ---
 
-*Last updated: 2026-04-14 — All phases complete (T-01 → T-53). Deployed to https://client-control-lac.vercel.app*
+*Last updated: 2026-04-14 — Phases 0–6 complete (T-01 → T-53). Phase 7 (improvements) defined (T-54 → T-70). Deployed to https://client-control-devies-api.vercel.app*

@@ -9,6 +9,7 @@ interface Props {
 const DEBOUNCE_MS = 300;
 
 export default function FilterBar({ onFilter }: Props) {
+  const [open, setOpen] = useState(false);
   const [companyName, setCompanyName] = useState("");
   const [contactName, setContactName] = useState("");
   const [email, setEmail] = useState("");
@@ -52,55 +53,72 @@ export default function FilterBar({ onFilter }: Props) {
 
   return (
     <div className={styles.bar}>
-      <div className={styles.inputs}>
-        <input
-          placeholder="Company name"
-          aria-label="Filter by company name"
-          value={companyName}
-          onChange={(e) => setCompanyName(e.target.value)}
-        />
-        <input
-          placeholder="Contact name"
-          aria-label="Filter by contact name"
-          value={contactName}
-          onChange={(e) => setContactName(e.target.value)}
-        />
-        <input
-          placeholder="Email"
-          aria-label="Filter by email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input
-          placeholder="Phone"
-          aria-label="Filter by phone"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-        />
-        <input
-          placeholder="Type of business"
-          aria-label="Filter by type of business"
-          value={typeOfBusiness}
-          onChange={(e) => setTypeOfBusiness(e.target.value)}
-        />
-        <input
-          placeholder="Added by"
-          aria-label="Filter by user who added"
-          value={addedBy}
-          onChange={(e) => setAddedBy(e.target.value)}
-        />
-      </div>
-
-      {hasAny && (
+      <div className={styles.header}>
+        <span className={styles.headerLabel}>Filter</span>
         <button
           type="button"
-          onClick={clearAll}
-          className={styles.clear}
-          aria-label="Clear all filters"
+          onClick={() => setOpen((o) => !o)}
+          className={styles.toggle}
+          aria-expanded={open}
+          aria-label={open ? "Collapse filters" : "Expand filters"}
         >
-          Clear filters
+          {open ? "▲" : "▼"}
         </button>
+      </div>
+
+      {open && (
+        <>
+          <div className={styles.inputs}>
+            <input
+              placeholder="Company name"
+              aria-label="Filter by company name"
+              value={companyName}
+              onChange={(e) => setCompanyName(e.target.value)}
+            />
+            <input
+              placeholder="Contact name"
+              aria-label="Filter by contact name"
+              value={contactName}
+              onChange={(e) => setContactName(e.target.value)}
+            />
+            <input
+              placeholder="Email"
+              aria-label="Filter by email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <input
+              placeholder="Phone"
+              aria-label="Filter by phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+            <input
+              placeholder="Type of business"
+              aria-label="Filter by type of business"
+              value={typeOfBusiness}
+              onChange={(e) => setTypeOfBusiness(e.target.value)}
+            />
+            <input
+              placeholder="Added by"
+              aria-label="Filter by user who added"
+              value={addedBy}
+              onChange={(e) => setAddedBy(e.target.value)}
+            />
+          </div>
+
+          {hasAny && (
+            <button
+              type="button"
+              onClick={clearAll}
+              className={styles.clear}
+              aria-label="Clear all filters"
+            >
+              Clear filters
+            </button>
+          )}
+        </>
       )}
     </div>
   );

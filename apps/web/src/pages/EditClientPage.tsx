@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import ClientForm from "../components/ClientForm";
-import { apiGetClient, apiUpdateClient } from "../services/api";
-import type { Client, CreateClientInput } from "@client-control/shared";
+import { apiGetClient, apiUpdateClient, apiAddContact, apiUpdateContact, apiDeleteContact } from "../services/api";
+import type { Client, Contact, CreateClientInput, CreateContactInput } from "@client-control/shared";
 import styles from "./FormPage.module.css";
 
 export default function EditClientPage() {
@@ -19,9 +19,37 @@ export default function EditClientPage() {
       .finally(() => setLoading(false));
   }, [id, navigate]);
 
-  async function handleSubmit(data: CreateClientInput) {
-    if (!id) return;
+  async function handleSubmit(data: CreateClientInput, contacts: CreateContactInput[]) {
+    if (!id || !client) return;
     await apiUpdateClient(Number(id), data);
+
+    const existing: Contact[] = client.additionalContacts ?? [];
+
+    // Delete contacts that were removed (existing ones not present in new list by position)
+    for (let i = contacts.length; i < existing.length; i++) {
+      const c = existing[i];
+      if (c) await apiDeleteContact(Number(id), c.id);
+    }
+
+    // Update or create contacts
+    for (let i = 0; i < contacts.length; i++) {
+      const draft = contacts[i];
+      const existingContact = existing[i];
+      if (!draft) continue;
+      const input: CreateContactInput = {
+        ...(draft.name && { name: draft.name }),
+        ...(draft.role && { role: draft.role }),
+        ...(draft.phone && { phone: draft.phone }),
+        ...(draft.email && { email: draft.email }),
+        ...(draft.linkedin && { linkedin: draft.linkedin }),
+      };
+      if (existingContact) {
+        await apiUpdateContact(Number(id), existingContact.id, input);
+      } else {
+        await apiAddContact(Number(id), input);
+      }
+    }
+
     void navigate(`/clients/${id}`);
   }
 
@@ -43,6 +71,7 @@ export default function EditClientPage() {
 
       <ClientForm
         initialValues={client}
+        additionalContacts={client.additionalContacts ?? []}
         onSubmit={handleSubmit}
         submitLabel="Save Changes"
       />

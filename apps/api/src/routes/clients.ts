@@ -8,6 +8,12 @@ import {
   updateClient,
   deleteClient,
 } from "../models/clientModel";
+import {
+  listContactsByClientId,
+  createContact,
+  updateContact,
+  deleteContact,
+} from "../models/contactModel";
 
 const router = Router();
 
@@ -51,7 +57,8 @@ router.get("/:id", async (req, res) => {
     return;
   }
 
-  res.json(client);
+  const additionalContacts = await listContactsByClientId(id);
+  res.json({ ...client, additionalContacts });
 });
 
 // ── POST /api/clients ─────────────────────────────────────────────────────────
@@ -128,6 +135,82 @@ router.delete("/:id", async (req, res) => {
 
   await deleteClient(id);
   res.json({ message: "Client deleted" });
+});
+
+// ── Contact routes ────────────────────────────────────────────────────────────
+
+const contactSchema = z.object({
+  name: z.string().optional(),
+  role: z.string().optional(),
+  phone: z.string().optional(),
+  email: z.string().email().optional().or(z.literal("")),
+  linkedin: z.string().url().optional().or(z.literal("")),
+});
+
+// POST /api/clients/:id/contacts
+router.post("/:id/contacts", async (req, res) => {
+  const clientId = Number(req.params["id"]);
+  if (!Number.isInteger(clientId) || clientId < 1) {
+    res.status(400).json({ error: "Invalid client id" });
+    return;
+  }
+
+  const client = await getClientById(clientId);
+  if (!client) {
+    res.status(404).json({ error: "Client not found" });
+    return;
+  }
+
+  const parsed = contactSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Validation failed", details: parsed.error.flatten() });
+    return;
+  }
+
+  const contact = await createContact(clientId, parsed.data);
+  res.status(201).json(contact);
+});
+
+// PUT /api/clients/:id/contacts/:contactId
+router.put("/:id/contacts/:contactId", async (req, res) => {
+  const clientId = Number(req.params["id"]);
+  const contactId = Number(req.params["contactId"]);
+  if (!Number.isInteger(clientId) || clientId < 1 || !Number.isInteger(contactId) || contactId < 1) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+
+  const parsed = contactSchema.partial().safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Validation failed", details: parsed.error.flatten() });
+    return;
+  }
+
+  const contact = await updateContact(contactId, clientId, parsed.data);
+  if (!contact) {
+    res.status(404).json({ error: "Contact not found" });
+    return;
+  }
+
+  res.json(contact);
+});
+
+// DELETE /api/clients/:id/contacts/:contactId
+router.delete("/:id/contacts/:contactId", async (req, res) => {
+  const clientId = Number(req.params["id"]);
+  const contactId = Number(req.params["contactId"]);
+  if (!Number.isInteger(clientId) || clientId < 1 || !Number.isInteger(contactId) || contactId < 1) {
+    res.status(400).json({ error: "Invalid id" });
+    return;
+  }
+
+  const deleted = await deleteContact(contactId, clientId);
+  if (!deleted) {
+    res.status(404).json({ error: "Contact not found" });
+    return;
+  }
+
+  res.json({ message: "Contact deleted" });
 });
 
 export default router;

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import FilterBar from "../components/FilterBar";
 import Pagination from "../components/Pagination";
+import PageSizeSelector from "../components/PageSizeSelector";
 import { apiGetClients } from "../services/api";
 import { useClientList } from "../hooks/useClientList";
 import type { ClientFilters } from "@client-control/shared";
@@ -12,10 +13,11 @@ export default function DashboardPage() {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
-  const [filters, setFilters] = useState<Omit<ClientFilters, "page" | "limit">>({});
+  const [limit, setLimit] = useState(10);
+  const [filters, setFilters] = useState<Omit<ClientFilters, "page" | "limit">>();
 
   const { clients, pagination, loading, error } = useClientList(
-    { ...filters, page, limit: 10 },
+    { ...filters, page, limit },
     apiGetClients
   );
 
@@ -53,9 +55,12 @@ export default function DashboardPage() {
       <main className={styles.main}>
         <div className={styles.toolbar}>
           <h2 className={styles.pageTitle}>Clients</h2>
-          <Link to="/clients/new" className={styles.addBtn}>
-            + Add Client
-          </Link>
+          <div className={styles.toolbarRight}>
+            <PageSizeSelector value={limit} onChange={(s) => { setLimit(s); setPage(1); }} />
+            <Link to="/clients/new" className={styles.addBtn}>
+              + Add Client
+            </Link>
+          </div>
         </div>
 
         <FilterBar onFilter={handleFilter} />
@@ -75,12 +80,14 @@ export default function DashboardPage() {
                 <tr>
                   <th scope="col">Company</th>
                   <th scope="col">Contact</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Email</th>
                 </tr>
               </thead>
               <tbody>
                 {clients.length === 0 ? (
                   <tr>
-                    <td colSpan={2} className={styles.empty}>No clients found.</td>
+                    <td colSpan={4} className={styles.empty}>No clients found.</td>
                   </tr>
                 ) : (
                   clients.map((c) => (
@@ -99,6 +106,8 @@ export default function DashboardPage() {
                     >
                       <td>{c.company_name}</td>
                       <td>{c.contact_name ?? "—"}</td>
+                      <td>{c.phone ?? "—"}</td>
+                      <td>{c.email ?? "—"}</td>
                     </tr>
                   ))
                 )}

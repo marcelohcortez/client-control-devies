@@ -102,3 +102,33 @@
     grid-template-columns: 1fr;
   }
 }
+
+.contactsSection {
+  margin-top: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+  padding-top: 1.25rem;
+}
+
+.contactsTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+  color: #374151;
+}
+
+.addContactBtn {
+  background: none;
+  border: 1px dashed #9ca3af;
+  border-radius: 6px;
+  color: #6b7280;
+  cursor: pointer;
+  font-size: 0.875rem;
+  margin-top: 0.75rem;
+  padding: 0.45rem 1rem;
+  transition: border-color 0.15s, color 0.15s;
+}
+
+.addContactBtn:hover {
+  border-color: #2563eb;
+  color: #2563eb;
+}

@@ -91,6 +91,24 @@ export default function ClientDetailPage() {
         <Field label="Updated at" value={new Date(client.updated_at).toLocaleString()} />
       </dl>
 
+      {client.additionalContacts && client.additionalContacts.length > 0 && (
+        <section className={styles.contactsSection}>
+          <h2 className={styles.contactsTitle}>Additional Contacts</h2>
+          {client.additionalContacts.map((contact, i) => (
+            <div key={contact.id} className={styles.contactCard}>
+              <p className={styles.contactNumber}>Contact {i + 1}</p>
+              <dl className={styles.contactGrid}>
+                {contact.name && <Field label="Name" value={contact.name} />}
+                {contact.role && <Field label="Role" value={contact.role} />}
+                {contact.phone && <Field label="Phone" value={contact.phone} />}
+                {contact.email && <Field label="Email" value={contact.email} />}
+                {contact.linkedin && <Field label="LinkedIn" value={contact.linkedin} />}
+              </dl>
+            </div>
+          ))}
+        </section>
+      )}
+
       {showDeleteModal && (
         <ConfirmDeleteModal
           clientName={client.company_name}

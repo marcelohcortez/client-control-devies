@@ -18,6 +18,25 @@ export interface PublicUser {
 // Client (company contact)
 // ─────────────────────────────────────────────
 
+export interface Contact {
+  id: number;
+  client_id: number;
+  name: string | null;
+  role: string | null;
+  phone: string | null;
+  email: string | null;
+  linkedin: string | null;
+  created_at: string;
+}
+
+export interface CreateContactInput {
+  name?: string;
+  role?: string;
+  phone?: string;
+  email?: string;
+  linkedin?: string;
+}
+
 export interface Client {
   id: number;
   company_name: string;
@@ -33,6 +52,7 @@ export interface Client {
   last_edited_by: string | null;
   created_at: string;
   updated_at: string;
+  additionalContacts?: Contact[];
 }
 
 /** Fields the API accepts when creating a new client */

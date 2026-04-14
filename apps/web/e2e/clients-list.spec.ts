@@ -9,6 +9,8 @@ test.describe("Clients List", () => {
   test("displays clients list page with table headers", async ({ page }) => {
     await expect(page.getByRole("columnheader", { name: "Company" })).toBeVisible();
     await expect(page.getByRole("columnheader", { name: "Contact" })).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: "Phone" })).toBeVisible();
+    await expect(page.getByRole("columnheader", { name: "Email" })).toBeVisible();
   });
 
   test("has Add Client button", async ({ page }) => {
@@ -16,6 +18,7 @@ test.describe("Clients List", () => {
   });
 
   test("has filter bar inputs", async ({ page }) => {
+    await page.getByRole("button", { name: /expand filters/i }).click();
     await expect(page.getByPlaceholder("Company name")).toBeVisible();
     await expect(page.getByPlaceholder("Contact name")).toBeVisible();
     await expect(page.getByPlaceholder("Email")).toBeVisible();
@@ -35,7 +38,8 @@ test.describe("Clients List", () => {
   });
 
   test("filter by company name reduces results", async ({ page }) => {
-    // Type a search term that likely matches nothing
+    // Open filter bar first (collapsed by default)
+    await page.getByRole("button", { name: /expand filters/i }).click();
     await page.getByPlaceholder("Company name").fill("xyzzy_nonexistent_12345");
     await expect(page.getByText("No clients found.")).toBeVisible({ timeout: 2000 });
   });

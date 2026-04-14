@@ -1,10 +1,20 @@
 import { useState, type FormEvent } from "react";
-import type { Client, CreateClientInput } from "@client-control/shared";
+import type { Client, Contact, CreateClientInput, CreateContactInput } from "@client-control/shared";
 import styles from "./ClientForm.module.css";
+import ContactFieldGroup from "./ContactFieldGroup";
+
+interface ContactDraft {
+  name: string;
+  role: string;
+  phone: string;
+  email: string;
+  linkedin: string;
+}
 
 interface Props {
   initialValues?: Partial<Client>;
-  onSubmit: (data: CreateClientInput) => Promise<void>;
+  additionalContacts?: Contact[];
+  onSubmit: (data: CreateClientInput, contacts: CreateContactInput[]) => Promise<void>;
   submitLabel: string;
 }
 
@@ -20,7 +30,7 @@ type FormValues = {
   status: string;
 };
 
-export default function ClientForm({ initialValues, onSubmit, submitLabel }: Props) {
+export default function ClientForm({ initialValues, additionalContacts, onSubmit, submitLabel }: Props) {
   const [values, setValues] = useState<FormValues>({
     company_name: initialValues?.company_name ?? "",
     contact_name: initialValues?.contact_name ?? "",
@@ -33,6 +43,16 @@ export default function ClientForm({ initialValues, onSubmit, submitLabel }: Pro
     status: initialValues?.status ?? "",
   });
 
+  const [contacts, setContacts] = useState<ContactDraft[]>(
+    (additionalContacts ?? []).map((c) => ({
+      name: c.name ?? "",
+      role: c.role ?? "",
+      phone: c.phone ?? "",
+      email: c.email ?? "",
+      linkedin: c.linkedin ?? "",
+    }))
+  );
+
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -40,6 +60,18 @@ export default function ClientForm({ initialValues, onSubmit, submitLabel }: Pro
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setValues((v) => ({ ...v, [field]: e.target.value }));
     };
+  }
+
+  function handleContactChange(index: number, field: keyof ContactDraft, value: string) {
+    setContacts((prev) => prev.map((c, i) => (i === index ? { ...c, [field]: value } : c)));
+  }
+
+  function handleContactRemove(index: number) {
+    setContacts((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function addContact() {
+    setContacts((prev) => [...prev, { name: "", role: "", phone: "", email: "", linkedin: "" }]);
   }
 
   async function handleSubmit(e: FormEvent) {
@@ -69,7 +101,18 @@ export default function ClientForm({ initialValues, onSubmit, submitLabel }: Pro
         ...(values.type_of_business && { type_of_business: values.type_of_business }),
         ...(values.status && { status: values.status }),
       };
-      await onSubmit(payload);
+
+      const contactInputs: CreateContactInput[] = contacts
+        .filter((c) => c.name || c.role || c.phone || c.email || c.linkedin)
+        .map((c) => ({
+          ...(c.name && { name: c.name }),
+          ...(c.role && { role: c.role }),
+          ...(c.phone && { phone: c.phone }),
+          ...(c.email && { email: c.email }),
+          ...(c.linkedin && { linkedin: c.linkedin }),
+        }));
+
+      await onSubmit(payload, contactInputs);
     } catch {
       setError("Something went wrong. Please try again.");
     } finally {
@@ -184,6 +227,26 @@ export default function ClientForm({ initialValues, onSubmit, submitLabel }: Pro
       <p className={styles.legend}>
         <span className={styles.requiredMark}>*</span> Required field
       </p>
+
+      <div className={styles.contactsSection}>
+        <h3 className={styles.contactsTitle}>Additional Contacts</h3>
+        {contacts.map((contact, i) => (
+          <ContactFieldGroup
+            key={i}
+            contact={contact}
+            index={i}
+            onChange={handleContactChange}
+            onRemove={handleContactRemove}
+          />
+        ))}
+        <button
+          type="button"
+          onClick={addContact}
+          className={styles.addContactBtn}
+        >
+          + Add contact
+        </button>
+      </div>
 
       <div className={styles.actions}>
         <button type="submit" disabled={loading} className={styles.submit}>
